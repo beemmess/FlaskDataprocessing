@@ -1,8 +1,0 @@
-**/*.DS_Store
-# Byte-compiled / optimized / DLL files
-__pycache__/
-**/*.py[cod]
-
-# Flask stuff:
-instance/
-.webassets-cache
