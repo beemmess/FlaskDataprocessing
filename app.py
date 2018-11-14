@@ -82,6 +82,20 @@ class AvgPupilD(Resource):
         return ShimmerFx.avgGSRandPPG(api.payload)
 
 
+# Simple api route for demonstration purpose and for step-by-step guide
+helloModel = api.model('hello',{
+    'message': fields.String(required=True, description='example model', example='john')
+})
+
+@api.route('/eyetracker/hello')
+class hello(Resource):
+    @api.doc('helloModel')
+    @api.expect(helloModel)
+    @api.marshal_with(helloModel, code=200)
+    def post(self):
+        return helloWorld.helloName(api.payload)
+
+
 
 
 if __name__ == '__main__':
