@@ -65,6 +65,7 @@ When the docker image is running then you can head on to [http://localhost:5000/
 ![SwaggerUI](/images/swaggerUI.png)
 
 
+
 # SwaggerUI and API documentation
 
 Swagger API documentation is automatically generated and available from the API’s root URL, as seen on the image here above, which is an auto generated Swagger UI. You can configure the documentation using the ``` @api.doc()``` decorator [[1]](https://flask-restplus.readthedocs.io/en/stable/swagger.html). The ``` @api.expect() ``` decorator allows you to specify the expected input fields[[2]](https://flask-restplus.readthedocs.io/en/stable/swagger.html#the-api-marshal-with-decorator). The ``` @api.response() ``` decorator allows you to document the known responses and is a shortcut for ``` @api.doc(responses='...') ``` [[3]](https://flask-restplus.readthedocs.io/en/stable/swagger.html#documenting-with-the-api-response-decorator). You can provide class-wide documentation using the doc parameter of Api.route(). This parameter accepts the same values as the ```Api.doc()``` decorator[[4]](https://flask-restplus.readthedocs.io/en/stable/swagger.html#the-api-route-decorator). For example, these two declarations are equivalent:
