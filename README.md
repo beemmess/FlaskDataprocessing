@@ -62,7 +62,7 @@ $ docker run -p 5000:5000 --name <CONTAINER_NAME> <IMAGE_NAME>
 - --name is used to give the container some name (*optional*)
 
 When the docker image is running then you can head on to [http://localhost:5000/](http://localhost:5000/) which should look something like this:
-![SwaggerUI](/images/SwaggerUI.png)
+![SwaggerUI](/images/Swagger.png)
 
 # Directory Structure
 
