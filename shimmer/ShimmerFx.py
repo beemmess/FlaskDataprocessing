@@ -27,7 +27,7 @@ def avgGSRandPPG(message):
     message["data"] = "{},{}".format(avgGSR,avgPPG)
     return message
 
-def normalizedGSR(message):
+def normalize(message):
     df, features = convertToDataFrame(message)
     # Get list of tasks example [1, 2, 3, 4......]
     listOfTasks = df["task"].unique()
@@ -40,28 +40,32 @@ def normalizedGSR(message):
     for task in listOfTasks:
         dfList.append(df.loc[df["task"]==task])
 
-    # Create an empty list of average GSR list
+    # Create an empty list for average of GSR and PPG for each task
     avgGSRList = []
+    avgPPGList = []
     # iterate through the dataframe list, and store each mean in a list
     for dataframe in dfList:
         avgGSRList.append(dataframe["GSR"].mean())
+        avgPPGList.append(dataframe["PPG"].mean())
+
     # sum up the average list
     sumAvgGSR = sum(avgGSRList)
-    # calculate the average GSR of all tasks
+    sumAvgPPG = sum(avgPPGList)
+    # calculate the average GSR/PPG of all tasks
     avgGSR = sumAvgGSR/nrOfTasks
+    avgPPG = sumAvgPPG/nrOfTasks
+
     # iterate through all the data and normalize the dataset
     # the result is equation 5.1 page 90 in:
     # Robost Multimodel Cognitive Load Measurement
-    print(df)
-    df["GSR"]=df.apply(lambda x : x["GSR"]/avgGSR,axis=1)
-
-    print("done")
-    print(df)
-
+    # print(df)
+    df["GSR"]=df.apply(lambda x : x["GSR"]/avgGSR, axis=1)
+    df["PPG"]=df.apply(lambda y : y["PPG"]/avgPPG, axis=1)
+    dataSub=df.to_csv(index=False,header=False,float_format='%.10f')
     # change the type to "normalized"
-    message["type"] = "normalized"
-    message["features"] = "timestamp,normGSR,PPG,task"
+    message["type"] = "normalize"
+    message["data"] = dataSub
 
-    # return message
+    return message
 
     # print(df)
