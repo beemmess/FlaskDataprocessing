@@ -62,11 +62,145 @@ $ docker run -p 5000:5000 --name <CONTAINER_NAME> <IMAGE_NAME>
 - --name is used to give the container some name (*optional*)
 
 When the docker image is running then you can head on to [http://localhost:5000/](http://localhost:5000/) which should look something like this:
-![SwaggerUI](/images/swaggerUI.png)
+![SwaggerUI](/images/SwaggerUI.png)
+
+# Directory Structure
 
 
+```bash
+ project/
+   ├── __init__.py
+   ├── app.py     
+   ├── dockerfile
+   ├── apis/      # Main API's entry points
+   │   ├── __init__.py
+   │   ├── eyetrackerNamespace.py
+   │   ├── shimmerNamespace.py
+   │   ├── ...
+   │   └── [device]Namespace.py
+   │
+   └── core/      # Business logic
+       ├── __init__.py
+       ├── eyetracker
+       │   ├── __init__.py
+       │   ├── Clean.py
+       │   ├── EyetrackerFx.py
+       │   └── ...
+       │
+       ├── shimmer/
+       │   ├── __init__.py
+       │   ├── ShimmerFx.py
+       │   └── ...
+       │
+       └── .../
+           ├── __init__.py
+           └── ...       
+```
+This application scales pretty well, the structure is organized so that only few things are needed to be done to add new API's and business logic. In `apis/__init__.py`, we only need follow the Step-By-Step quide that is later on, and then add and import the new namespace to the list as seen here below, then new API's entrypoints are available.
 
-# SwaggerUI and API documentation
+```py
+from flask_restplus import Api
+
+from .eyetrackerNamespace import api as eyetrackerNs
+from .shimmerNamespace import api as shimmerNs
+# ....
+# .... add and import additional namespaces as needed
+# from .{device}Namespace import api as {device}Ns
+
+api = Api(
+    title='Data Processing Web Service',
+    version='1.0',
+    description='Feature Extraction and cleaning API',
+    # All API metadatas
+    )
+
+api.add_namespace(eyetrackerNs)
+api.add_namespace(shimmerNs)
+# ...
+# ... add additional namespace to api as needed
+# api.add_namespace({device}Ns)
+```
+
+
+### Edit/Add new things to the application
+The business logic is split into few devices; currently it contains a directory for Tobii eye tracker device and a director for Shimmer3 GSR+ device.
+
+In the root directory, the `app.py` is the main script that will start up the Flask web framework, `app.py` also imports the  all the API routes that will be discussed later on in this documentation. This script below is the skeleton of the `app.py` The host is configured to be `0.0.0.0` therefore, when the web client is running then you can go on to [http://localhost:5000/](http://localhost:5000/) and try it out.
+
+
+```py
+from flask import Flask
+from apis import api
+
+app = Flask(__name__)
+api.init_app(app)
+
+if __name__ == '__main__':
+    app.run(debug=True, host='0.0.0.0')
+```
+
+# Step-by-step
+Here is a step-by-step guide to implement a new device or add new business logic to an already defined device. Now, let's use the eye tracker and add a new logic to it.
+
+#### Step 0
+When adding a new device, then create a new business logic directory for that particular device, similar to shimmer and eye tracker and add that directory in `core/` along with a `__init__py` file.
+
+#### Step 1
+We are going to add a new file to the `core/eyetracker/` directory, and lets call that `helloWorld.py` later on, we will add some business logic to it.
+
+#### Step 2
+In the `helloWorld.py` we create a simple function that returns a message with a "Hello " plus some string that the function receives in a JSON message from the `api.payload` (in step 3)
+```py
+def helloName(msg):
+    name = msg["message"]
+    msg["message"] = "Hello {}".format(name)
+    return msg
+```
+Now the function is ready to be used
+#### Step 3
+
+Next up, we need to add an API route to use that function we just created. Therefore, we add a new route to `apis/eyetrackerNamespace.py` and a model for the API, ` @api.route('/eyetracker/hello') ` defines the route to that particular function.
+
+```py
+helloModel = api.model('hello',{
+    'message': fields.String(required=True, description='example model', example='john')
+})
+```
+`helloModel` is the layout of the request, having `required=True` which means that this value cant be empty. This model is then added to the `api.expect` as seen here below
+
+```py
+from core.eyetracker import helloWorld # import helloWorld from the module core/eyetracker/
+
+@api.route('/eyetracker/hello')   
+class hello(Resource):            
+    @api.doc('helloModel')        
+    @api.expect(helloModel)
+    @api.marshal_with(helloModel, code=200)
+    def post(self):
+        # JSON string is gotten by getting the api payload
+        return helloWorld.helloName(api.payload)
+```
+As you can see the ` @api.marshal_with ` decorator is also used, this decorator documents the methods and a optional parameter code allows you to specify the expected HTTP status code (200 by default). Now, This `api.route` (http://localhost:5000/eyetracker/hello)  is now expecting a JSON string in the format like this:
+```
+{'message':'Some string'}
+```
+
+#### Step 4
+If this is a new device, then we need to import and add the namespace to `apis/__init__.py`
+
+```py
+api.add_namespace(eyetrackerNs)
+api.add_namespace(shimmerNs)
+# ...
+# ... add additional namespace to api as needed
+# api.add_namespace({device}Ns)
+```
+
+#### Step 5
+Now we can build the docker image again like described earlier in **Docker** section: **Build and Run**
+
+# More Information
+### SwaggerUI and API documentation
 
 Swagger API documentation is automatically generated and available from the API’s root URL, as seen on the image here above, which is an auto generated Swagger UI. You can configure the documentation using the ``` @api.doc()``` decorator [[1]](https://flask-restplus.readthedocs.io/en/stable/swagger.html). The ``` @api.expect() ``` decorator allows you to specify the expected input fields[[2]](https://flask-restplus.readthedocs.io/en/stable/swagger.html#the-api-marshal-with-decorator). The ``` @api.response() ``` decorator allows you to document the known responses and is a shortcut for ``` @api.doc(responses='...') ``` [[3]](https://flask-restplus.readthedocs.io/en/stable/swagger.html#documenting-with-the-api-response-decorator). You can provide class-wide documentation using the doc parameter of Api.route(). This parameter accepts the same values as the ```Api.doc()``` decorator[[4]](https://flask-restplus.readthedocs.io/en/stable/swagger.html#the-api-route-decorator). For example, these two declarations are equivalent:
 
@@ -87,90 +221,10 @@ class MyResource(Resource):
         return {}
 ```
 
-For more information and documentation, there are many other Swagger examples to see on [Flask RESTplus documentation](https://flask-restplus.readthedocs.io/en/stable/swagger.html) web site.
-# Edit/Add new things to the application
-This library is split into few devices; currently it contains a directory for Tobii eye tracker device and a director for Shimmer3 GSR+ device.
-
-In the root directory, the ```app.py``` is the main script that will start up the Flask web framework, ```app.py``` also contains all the API routes that will be discussed later on in this documentation. This script below is the skeleton of the ```app.py```. The host is configured to be ```0.0.0.0```; therefore, when the web client is running then you can go on to [http://localhost:5000/](http://localhost:5000/)
+For more information and documentation, please visit the [Flask RESTplus documentation](https://flask-restplus.readthedocs.io/en/stable/swagger.html).
 
 
-```py
-from flask import Flask, request, jsonify
-from flask_restplus import Api, Resource, fields
-app = Flask(__name__)
-
-api = Api(app, version='1.0', title='Feature Extraction and cleaning API')
-# base namespace is configured to be "api" e.g. http://localhost:5000/api/
-api = api.namespace('api', description='API operations')
-
-# Some code
-
-if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0')
-```
-
-## Step-by-step
-Here is a step-by-step guide to implement a new device or add new functions to an already defined device. Now, let's use the eye tracker and add a new function to it.
-
-#### Step 0
-If you are creating a new device, then you create a new directory for that particular device, similar to shimmer and eye tracker, add a ```__init__.py``` to that directory.
-
-#### Step 1
-We add a new file to ```eyetracker``` directory, and lets call that ```helloWorld.py```, later on, we will add a function to it.
-
-we add our new file to the list in ```__init__.py``` in a ```__all__``` parameter.
-
-```py
-__all__ = ("FILE1","FILE2" "....","helloWorld")
-```
-If we do that, then when we do an import like this ```from eye tracker import *``` then helloWorld will be in that import.
-
-#### Step 2
-In the ```helloWorld.py```, we create a simple function that returns a message with a "Hello " plus some string that the function receives in a JSON message from the ``` api.payload```.
-```py
-def helloName(msg):
-    name = msg["message"]
-    msg["message"] = "Hello {}".format(name)
-    return msg
-```
-Now the function is ready to be used
-#### Step 3
-Next up, we need to add an API route to use that function we just created. Therefore, we add a new route to```app.py``` and a model for the API.
-
-
-```py
-helloModel = api.model('hello',{
-    'message': fields.String(required=True, description='example model', example='john')
-})
-```
-helloModel is the layout of the request, having ```required=True``` which means that this value cant be empty. This model is then added to the ```api.expect``` here below
-
-```py
-# for local host:
-# http://localhost:5000/api/eyetracker/hello
-@api.route('/eyetracker/hello')   
-class hello(Resource):            
-    @api.doc('helloModel')        
-    @api.expect(helloModel)
-    @api.marshal_with(helloModel, code=200)
-    def post(self):
-        # JSON string is gotten by getting the api payload
-        return helloWorld.helloName(api.payload)
-```
-
-This ```api.route``` (http://localhost:5000/api/eyetracker/hello)  is now expecting a JSON string in the format like this:
-```
-{'message':'Some string'}
-```
-
-#### Step 4
-Now we can build the docker image again like described earlier in **Docker** section **Build and Run**
-
-# Authors
-- Bjarki Mar Stefansson - Initial work
-- Barbara Weber - Supervisor
-
-# Links
+### Links
 
 | Name | Website |
 | ------ | ------ |
@@ -178,3 +232,7 @@ Now we can build the docker image again like described earlier in **Docker** sec
 | Flask RESTplus | https://flask-restplus.readthedocs.io/en/stable/ |
 | Swagger | https://swagger.io/|
 | Docker | https://www.docker.com/|
+
+# Authors
+- Bjarki Mar Stefansson - Initial work
+- Barbara Weber - Supervisor
