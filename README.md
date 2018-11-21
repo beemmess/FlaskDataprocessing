@@ -96,7 +96,7 @@ When the docker image is running then you can head on to [http://localhost:5000/
            ├── __init__.py
            └── ...       
 ```
-This application scales pretty well, the structure is organized so that only few things are needed to be done to add new API's and business logic. If you follow the Step-By-Steb guide later on, then we only need to import and add the namespace to the list in `apis/__init__.py` as seen here in the script here below.
+This application scales pretty well, the structure is organized so that only few things are needed to be done to add new API routes and business logic. If you follow the Step-By-Steb guide later on, then the new namespace is only needed to be imported and added to the list in `apis/__init__.py` as seen here in the script below.
 
 ```py
 from flask_restplus import Api
