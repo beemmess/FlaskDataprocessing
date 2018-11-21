@@ -125,7 +125,7 @@ api.add_namespace(shimmerNs)
 ### Edit/Add new things to the application
 The business logic is split into few devices; currently it contains a directory for Tobii eye tracker device and a director for Shimmer3 GSR+ device.
 
-In the root directory, the `app.py` is the main script that will start up the Flask web framework, `app.py` also imports the  all the API routes that will be discussed later on in this documentation. This script below is the skeleton of the `app.py` The host is configured to be `0.0.0.0` therefore, when the web client is running then you can go on to [http://localhost:5000/](http://localhost:5000/) and try it out.
+In the root directory, the `app.py` is the main script that will start up the Flask web framework, `app.py` also imports the `api` from `apis/__init__.py`  which cointans all the all the API routes. The host is configured to be `0.0.0.0` therefore, when the web client is running then you can go on to [http://localhost:5000/](http://localhost:5000/) and try it out.
 
 
 ```py
