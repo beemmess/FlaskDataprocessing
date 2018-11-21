@@ -63,6 +63,7 @@ $ docker run -p 5000:5000 --name <CONTAINER_NAME> <IMAGE_NAME>
 
 When the docker image is running then you can head on to [http://localhost:5000/](http://localhost:5000/) which should look something like this:
 ![SwaggerUI](/images/Swagger.png)
+This is Swagger UI, from here you can test the API by performing requests by choosing the desired route. Each route has an example JSON string that can be used for testing the requests.
 
 # Directory Structure
 
@@ -126,7 +127,6 @@ api.add_namespace(shimmerNs)
 The business logic is split into few devices; currently it contains a directory for Tobii eye tracker device and a director for Shimmer3 GSR+ device.
 
 In the root directory, the `app.py` is the main script that will start up the Flask web framework, `app.py` also imports the `api` from `apis/__init__.py`  which cointans all the all the API routes. The host is configured to be `0.0.0.0` therefore, when the web client is running then you can go on to [http://localhost:5000/](http://localhost:5000/) and try it out.
-
 
 ```py
 from flask import Flask
