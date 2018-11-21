@@ -81,7 +81,7 @@ When the docker image is running then you can head on to [http://localhost:5000/
    │
    └── core/      # Business logic
        ├── __init__.py
-       ├── eyetracker
+       ├── eyetracker/
        │   ├── __init__.py
        │   ├── Clean.py
        │   ├── EyetrackerFx.py
