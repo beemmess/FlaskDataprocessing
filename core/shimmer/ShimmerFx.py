@@ -61,7 +61,7 @@ def normalize(message):
     # print(df)
     df["GSR"]=df.apply(lambda x : x["GSR"]/avgGSR, axis=1)
     df["PPG"]=df.apply(lambda y : y["PPG"]/avgPPG, axis=1)
-    dataSub=df.to_csv(index=False,header=False,float_format='%.10f')
+    dataSub=df.to_csv(index=False,header=False)
     # change the type to "normalized"
     message["type"] = "normalize"
     message["data"] = dataSub

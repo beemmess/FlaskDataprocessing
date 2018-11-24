@@ -27,8 +27,11 @@ def substitution(message):
     # page 5 in the article
     for feature in features:
         df.loc[null_rows,feature[0]]=df.apply(lambda x : fx(x,feature),axis=1)
-    # convert the dataframe into csv, with no row (index) numbers, and no header
-    dataSub=df.to_csv(index=False,header=False,float_format='%.10f')
+
+    # fillna is used as to fill empty with string "NaN" so that when string is 
+    # parsed to double in e.g. Java, it will be regocnised as NaN
+    # Then convert the dataframe into csv, with no row (index) numbers, and no header
+    dataSub=df.fillna("NaN").to_csv(index=False,header=False)
     # save the type to preprocessed
     message["type"] = "substitution"
     # save the preprocessed data into data value in JSON
@@ -56,7 +59,7 @@ def interpolateMissingData(message):
     # df = df.dropna()
     df = df.interpolate(method="linear")
     # convert the dataframe into csv string, with no row (index) numbers, and no header
-    dataSub=df.to_csv(index=False,header=False,float_format='%.10f')
+    dataSub=df.to_csv(index=False,header=False)
     # save the type to preprocessed
     message["type"] = "interpolate"
     # save the preprocessed data into data value in JSON
