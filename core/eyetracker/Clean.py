@@ -28,7 +28,7 @@ def substitution(message):
     for feature in features:
         df.loc[null_rows,feature[0]]=df.apply(lambda x : fx(x,feature),axis=1)
 
-    # fillna is used as to fill empty with string "NaN" so that when string is 
+    # fillna is used as to fill empty with string "NaN" so that when string is
     # parsed to double in e.g. Java, it will be regocnised as NaN
     # Then convert the dataframe into csv, with no row (index) numbers, and no header
     dataSub=df.fillna("NaN").to_csv(index=False,header=False)
@@ -55,11 +55,9 @@ def interpolateMissingData(message):
 
 # https://docs.scipy.org/doc/scipy-0.14.0/reference/generated/scipy.signal.butter.html
 # https://pandas.pydata.org/pandas-docs/stable/missing_data.html
-    # delete rows after substition that still contains NaN
-    # df = df.dropna()
     df = df.interpolate(method="linear")
     # convert the dataframe into csv string, with no row (index) numbers, and no header
-    dataSub=df.to_csv(index=False,header=False)
+    dataSub=df.fillna("NaN").to_csv(index=False,header=False)
     # save the type to preprocessed
     message["type"] = "interpolate"
     # save the preprocessed data into data value in JSON
