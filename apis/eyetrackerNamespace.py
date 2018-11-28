@@ -43,6 +43,14 @@ avgPupil = api.model('avgPupil',{
     'data': fields.String(required=True, description='Average pupil Diameter',example='1,2')
 })
 
+# Response
+avgPupilPerTask = api.model('avgPupilPerTask',{
+    'type': fields.String(required=True, description='type of data', example='avgPupilPerTask'),
+    'id': fields.String(required=True, description='id of the data', example='FlaskTest'),
+    'features':fields.String(required=True, description='List of features', example='pupilL,pupilR,task'),
+    'data': fields.String(required=True, description='Average pupil Diameter',example='1,2,SomeTask')
+})
+
 
 
 @api.route('/substitution')
@@ -69,6 +77,15 @@ class AvgPupilD(Resource):
     @api.marshal_with(avgPupil, code=200)
     def post(self):
         return EyetrackerFx.averagePupilDiameter(api.payload)
+
+
+@api.route('/avgPupil/perTask')
+class AvgPupilDByTask(Resource):
+    @api.doc('pupil_avg_per_task')
+    @api.expect(preprocessed)
+    @api.marshal_with(avgPupilPerTask, code=200)
+    def post(self):
+        return EyetrackerFx.averagePupilDiameterForEachTask(api.payload)
 
 
 
