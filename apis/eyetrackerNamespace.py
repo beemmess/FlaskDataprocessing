@@ -7,6 +7,8 @@ api = Namespace('eyetracker', description='Eyetracker related operations')
 # expect
 eyetrackerRaw = api.model('eytrackerraw',{
     'type': fields.String(required=True, description='type of data', example='raw'),
+    'apiUrl': fields.String(required=True, description='api url locations', example='some/ending/of/url'),
+    'device': fields.String(required=True, description='name of the device/data', example='eyetracker'),
     'id': fields.String(required=True, description='id of the data', example='FlaskTest'),
     'features':fields.String(required=True, description='List of set of features', example='timestamp,leftX,leftY,rightX,rightY,pupilL,pupilR,task'),
     'data': fields.String(required=True, description='The dataset that is in need for cleaning', example='1,2,3,4,5,6,7,SomeTask1\n7,6,5,nan,3,2,nan,SomeTask2')
@@ -14,6 +16,8 @@ eyetrackerRaw = api.model('eytrackerraw',{
 # Response
 preprocessed = api.model('preprocessed',{
     'type': fields.String(required=True, description='type of data', example='preprocessed'),
+    'apiUrl': fields.String(required=True, description='api url locations', example='some/ending/of/url'),
+    'device': fields.String(required=True, description='name of the device/data', example='eyetracker'),
     'id': fields.String(required=True, description='id of the data', example='FlaskTest'),
     'features':fields.String(required=True, description='List of set of features', example='timestamp,leftX,leftY,rightX,rightY,pupilL,pupilR,task'),
     'data': fields.String(required=True, description='The dataset that is in need for cleaning', example='1,2,3,4,5,6,7,someTask1\n7,6,5,6,3,2,2,someTask2')
@@ -22,6 +26,8 @@ preprocessed = api.model('preprocessed',{
 # Response
 substition = api.model('substition',{
     'type': fields.String(required=True, description='type of data', example='substition'),
+    'apiUrl': fields.String(required=True, description='api url locations', example='some/ending/of/url'),
+    'device': fields.String(required=True, description='name of the device/data', example='eyetracker'),
     'id': fields.String(required=True, description='id of the data', example='FlaskTest'),
     'features':fields.String(required=True, description='List of set of features', example='timestamp,leftX,leftY,rightX,rightY,pupilL,pupilR,task'),
     'data': fields.String(required=True, description='The dataset that is in need for cleaning', example='1,2,3,4,5,6,7,someTask1\n7,6,5,6,3,2,2,someTask2')
@@ -30,6 +36,8 @@ substition = api.model('substition',{
 # Response
 interpolate = api.model('interpolate',{
     'type': fields.String(required=True, description='type of data', example='interpolate'),
+    'apiUrl': fields.String(required=True, description='api url locations', example='some/ending/of/url'),
+    'device': fields.String(required=True, description='name of the device/data', example='eyetracker'),
     'id': fields.String(required=True, description='id of the data', example='FlaskTest'),
     'features':fields.String(required=True, description='List of set of features', example='timestamp,leftX,leftY,rightX,rightY,pupilL,pupilR,task'),
     'data': fields.String(required=True, description='The dataset that is in need for cleaning', example='1,2,3,4,5,6,7,someTask1\n7,6,5,6,3,2,2,someTask2')
@@ -38,6 +46,8 @@ interpolate = api.model('interpolate',{
 # Response
 avgPupil = api.model('avgPupil',{
     'type': fields.String(required=True, description='type of data', example='avgPupil'),
+    'apiUrl': fields.String(required=True, description='api url locations', example='some/ending/of/url'),
+    'device': fields.String(required=True, description='name of the device/data', example='eyetracker'),
     'id': fields.String(required=True, description='id of the data', example='FlaskTest'),
     'features':fields.String(required=True, description='List of features', example='pupilL,pupilR'),
     'data': fields.String(required=True, description='Average pupil Diameter',example='1,2')
@@ -46,6 +56,8 @@ avgPupil = api.model('avgPupil',{
 # Response
 avgPupilPerTask = api.model('avgPupilPerTask',{
     'type': fields.String(required=True, description='type of data', example='avgPupilPerTask'),
+    'apiUrl': fields.String(required=True, description='api url locations', example='some/ending/of/url'),
+    'device': fields.String(required=True, description='name of the device/data', example='eyetracker'),
     'id': fields.String(required=True, description='id of the data', example='FlaskTest'),
     'features':fields.String(required=True, description='List of features', example='pupilL,pupilR,task'),
     'data': fields.String(required=True, description='Average pupil Diameter',example='1,2,SomeTask')
