@@ -9,7 +9,7 @@ shimmerRaw = api.model('shimmerraw',{
     'id': fields.String(required=True, description='id of the data', example='FlaskTest'),
     'apiUrl': fields.String(required=True, description='api url locations', example='some/ending/of/url'),
     'device': fields.String(required=True, description='name of the device/data', example='shimmer'),
-    'features':fields.String(required=True, description='List of set of features', example='timestamp,GSR,PPG,task'),
+    'attributes':fields.String(required=True, description='List of set of attributes', example='timestamp,GSR,PPG,task'),
     'data': fields.String(required=True, description='The dataset that is in need for processing', example='1,2,3,1\n4,5,6,1')
 })
 
@@ -19,15 +19,33 @@ shimmerNormalized = api.model('normGsrAndPpg',{
     'apiUrl': fields.String(required=True, description='api url locations', example='some/ending/of/url'),
     'device': fields.String(required=True, description='name of the device/data', example='shimmer'),
     'id': fields.String(required=True, description='id of the data', example='FlaskTest'),
-    'features':fields.String(required=True, description='List of set of features', example='timestamp,GSR,PPG,task'),
+    'attributes':fields.String(required=True, description='List of set of attributes', example='timestamp,GSR,PPG,task'),
     'data': fields.String(required=True, description='The dataset that is in need for processing', example='1,1.003,1.004,1')
+})
+
+# response
+shimmerAvg = api.model('avgGSRandPPG',{
+    'type': fields.String(required=True, description='type of data', example='avgGSRandPPG'),
+    'apiUrl': fields.String(required=True, description='api url locations', example='some/ending/of/url'),
+    'device': fields.String(required=True, description='name of the device/data', example='shimmer'),
+    'id': fields.String(required=True, description='id of the data', example='FlaskTest'),
+    'attributes':fields.String(required=True, description='List of set of attributes', example='avgGSR,avgPPG'),
+    'data': fields.String(required=True, description='The dataset that is in need for processing', example='1800,1900')
 })
 
 
 @api.route('/normalize')
-class AvgPupilD(Resource):
+class shimmerNormalize(Resource):
     @api.doc('normalizeShimmer')
     @api.expect(shimmerRaw)
     @api.marshal_with(shimmerNormalized, code=200)
     def post(self):
         return ShimmerFx.normalize(api.payload)
+
+@api.route('/avgGSRandPPG')
+class avgShimmer(Resource):
+    @api.doc('normalizeShimmer')
+    @api.expect(shimmerRaw)
+    @api.marshal_with(shimmerAvg, code=200)
+    def post(self):
+        return ShimmerFx.avgGSRandPPG(api.payload)

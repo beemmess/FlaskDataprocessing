@@ -10,7 +10,7 @@ eyetrackerRaw = api.model('eytrackerraw',{
     'apiUrl': fields.String(required=True, description='api url locations', example='some/ending/of/url'),
     'device': fields.String(required=True, description='name of the device/data', example='eyetracker'),
     'id': fields.String(required=True, description='id of the data', example='FlaskTest'),
-    'features':fields.String(required=True, description='List of set of features', example='timestamp,leftX,leftY,rightX,rightY,pupilL,pupilR,task'),
+    'attributes':fields.String(required=True, description='List of set of attributes', example='timestamp,leftX,leftY,rightX,rightY,pupilL,pupilR,task'),
     'data': fields.String(required=True, description='The dataset that is in need for cleaning', example='1,2,3,4,5,6,7,SomeTask1\n7,6,5,nan,3,2,nan,SomeTask2')
 })
 # Response
@@ -19,7 +19,7 @@ preprocessed = api.model('preprocessed',{
     'apiUrl': fields.String(required=True, description='api url locations', example='some/ending/of/url'),
     'device': fields.String(required=True, description='name of the device/data', example='eyetracker'),
     'id': fields.String(required=True, description='id of the data', example='FlaskTest'),
-    'features':fields.String(required=True, description='List of set of features', example='timestamp,leftX,leftY,rightX,rightY,pupilL,pupilR,task'),
+    'attributes':fields.String(required=True, description='List of set of attributes', example='timestamp,leftX,leftY,rightX,rightY,pupilL,pupilR,task'),
     'data': fields.String(required=True, description='The dataset that is in need for cleaning', example='1,2,3,4,5,6,7,someTask1\n7,6,5,6,3,2,2,someTask2')
 })
 
@@ -29,7 +29,7 @@ substition = api.model('substition',{
     'apiUrl': fields.String(required=True, description='api url locations', example='some/ending/of/url'),
     'device': fields.String(required=True, description='name of the device/data', example='eyetracker'),
     'id': fields.String(required=True, description='id of the data', example='FlaskTest'),
-    'features':fields.String(required=True, description='List of set of features', example='timestamp,leftX,leftY,rightX,rightY,pupilL,pupilR,task'),
+    'attributes':fields.String(required=True, description='List of set of attributes', example='timestamp,leftX,leftY,rightX,rightY,pupilL,pupilR,task'),
     'data': fields.String(required=True, description='The dataset that is in need for cleaning', example='1,2,3,4,5,6,7,someTask1\n7,6,5,6,3,2,2,someTask2')
 })
 
@@ -39,7 +39,7 @@ interpolate = api.model('interpolate',{
     'apiUrl': fields.String(required=True, description='api url locations', example='some/ending/of/url'),
     'device': fields.String(required=True, description='name of the device/data', example='eyetracker'),
     'id': fields.String(required=True, description='id of the data', example='FlaskTest'),
-    'features':fields.String(required=True, description='List of set of features', example='timestamp,leftX,leftY,rightX,rightY,pupilL,pupilR,task'),
+    'attributes':fields.String(required=True, description='List of set of attributes', example='timestamp,leftX,leftY,rightX,rightY,pupilL,pupilR,task'),
     'data': fields.String(required=True, description='The dataset that is in need for cleaning', example='1,2,3,4,5,6,7,someTask1\n7,6,5,6,3,2,2,someTask2')
 })
 
@@ -49,7 +49,7 @@ avgPupil = api.model('avgPupil',{
     'apiUrl': fields.String(required=True, description='api url locations', example='some/ending/of/url'),
     'device': fields.String(required=True, description='name of the device/data', example='eyetracker'),
     'id': fields.String(required=True, description='id of the data', example='FlaskTest'),
-    'features':fields.String(required=True, description='List of features', example='pupilL,pupilR'),
+    'attributes':fields.String(required=True, description='List of attributes', example='pupilL,pupilR'),
     'data': fields.String(required=True, description='Average pupil Diameter',example='1,2')
 })
 
@@ -59,7 +59,7 @@ avgPupilPerTask = api.model('avgPupilPerTask',{
     'apiUrl': fields.String(required=True, description='api url locations', example='some/ending/of/url'),
     'device': fields.String(required=True, description='name of the device/data', example='eyetracker'),
     'id': fields.String(required=True, description='id of the data', example='FlaskTest'),
-    'features':fields.String(required=True, description='List of features', example='pupilL,pupilR,task'),
+    'attributes':fields.String(required=True, description='List of attributes', example='pupilL,pupilR,task'),
     'data': fields.String(required=True, description='Average pupil Diameter',example='1,2,SomeTask')
 })
 
@@ -88,7 +88,7 @@ class AvgPupilD(Resource):
     @api.expect(preprocessed)
     @api.marshal_with(avgPupil, code=200)
     def post(self):
-        return EyetrackerFx.averagePupilDiameter(api.payload)
+        return EyetrackerFx.avgPupilDiameter(api.payload)
 
 
 @api.route('/avgPupil/perTask')
@@ -97,7 +97,7 @@ class AvgPupilDByTask(Resource):
     @api.expect(preprocessed)
     @api.marshal_with(avgPupilPerTask, code=200)
     def post(self):
-        return EyetrackerFx.averagePupilDiameterForEachTask(api.payload)
+        return EyetrackerFx.avgPupilDiameterForEachTask(api.payload)
 
 
 

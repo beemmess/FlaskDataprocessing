@@ -5,30 +5,30 @@ import json
 def convertToDataFrame(message):
     # Get the data string from the JSON
     data = message["data"]
-    # Get the features string and split it up into list
-    features = message["features"].split(",")
-    # Read the data as csv in buffer and put name of columns as features
-    df = pd.read_csv(pd.compat.StringIO(data), names=features)
+    # Get the attributes string and split it up into list
+    attributes = message["attributes"].split(",")
+    # Read the data as csv in buffer and put name of columns as attributes
+    df = pd.read_csv(pd.compat.StringIO(data), names=attributes)
 
-    return df, features
+    return df, attributes
 
 def avgGSRandPPG(message):
     # get the data as a dataframe
-    df, features = convertToDataFrame(message)
+    df, attributes = convertToDataFrame(message)
 
     # calculate the mean of pupil diameters
     avgGSR = df['GSR'].mean()
     avgPPG = df['PPG'].mean()
     # change the type to "avgPupil"
     message["type"] = "avgGSRandPPG"
-    # change features to avgPupilL and avgPupilR
-    message["features"] = "avgGSR,avgPPG"
+    # change attributes to avgPupilL and avgPupilR
+    message["attributes"] = "avgGSR,avgPPG"
     # save the average data in the "data" value in the JSON
     message["data"] = "{},{}".format(avgGSR,avgPPG)
     return message
 
 def normalize(message):
-    df, features = convertToDataFrame(message)
+    df, attributes = convertToDataFrame(message)
     # Get list of tasks example [1, 2, 3, 4......]
     listOfTasks = df["task"].unique()
     # Count how many taskst there are example: 4

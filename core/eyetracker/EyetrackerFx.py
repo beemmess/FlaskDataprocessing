@@ -5,32 +5,33 @@ import json
 def convertToDataFrame(message):
     # Get the data string from the JSON
     data = message["data"]
-    # Get the features string and split it up into list
-    features = message["features"].split(",")
-    # Read the data as csv in buffer and put name of columns as features
-    df = pd.read_csv(pd.compat.StringIO(data), names=features)
+    # Get the attributes string and split it up into list
+    attributes = message["attributes"].split(",")
+    # Read the data as csv in buffer and put name of columns as attributes
+    df = pd.read_csv(pd.compat.StringIO(data), names=attributes)
 
-    return df, features
+    return df, attributes
 
-def averagePupilDiameter(message):
+
+def avgPupilDiameter(message):
     # get the data as a dataframe
-    df, features = convertToDataFrame(message)
+    df, attributes = convertToDataFrame(message)
 
     # calculate the mean of pupil diameters
     avgPupilL = df['pupilL'].mean()
     avgPupilR = df['pupilR'].mean()
     # change the type to "avgPupil"
     message["type"] = "avgPupil"
-    # change features to avgPupilL and avgPupilR
-    message["features"] = "avgPupilL,avgPupilR"
+    # change attributes to avgPupilL and avgPupilR
+    message["attributes"] = "avgPupilL,avgPupilR"
     # save the average data in the "data" value in the JSON
     message["data"] = "{},{}".format(avgPupilL,avgPupilR)
     return message
 
 
-def averagePupilDiameterForEachTask(message):
+def avgPupilDiameterForEachTask(message):
     # get the data as a dataframe
-    df, features = convertToDataFrame(message)
+    df, attributes = convertToDataFrame(message)
     # Get the neccesary fetures
     df = df[['pupilL','pupilR','task']]
     # Get list of tasks example [1, 2, 3, 4......]
@@ -57,10 +58,9 @@ def averagePupilDiameterForEachTask(message):
 
     # change the type to "avgPupilTasks"
     message["type"] = "avgPupilTasks"
-    # change features to avgPupilL and avgPupilR
-    message["features"] = "avgPupilL,avgPupilR,task"
+    # change attributes to avgPupilL and avgPupilR
+    message["attributes"] = "avgPupilL,avgPupilR,task"
     dataSub=df.dropna().to_csv(index=False,header=False)
     # save the average data in the "data" value in the JSON
     message["data"] = dataSub
-    print(message)
     return message
